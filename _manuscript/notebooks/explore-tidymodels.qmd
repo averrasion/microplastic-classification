@@ -1,0 +1,39 @@
+---
+title: "Exploration using Tidymodels"
+format: html
+---
+Load the `tidymodels` library along with other useful ones:
+
+```{r}
+library(tidymodels)
+library(readr)
+```
+
+Load the full dataset from the Surging for Science project, also clean the variables names so they use `snake_case`:
+
+```{r}
+plastics <- read_csv("data/surfingforscience_240325.csv") |>
+  janitor::clean_names()
+```
+
+The aim of this notebook is to evaluate performance of different models following the [tidymodels tutorial](https://www.tidymodels.org/learn/). To evaluate performance we need plastics that have been evaluated manually so we can compare the trained human observer with the AI. A *good* model is the one that gets us very similar results to the trained human.
+
+Subset the data to get all plastics evaluated by a human observer.
+
+```{r}
+plastics_manual <- plastics |> filter(rf_use == FALSE)
+```
+
+Overall, the model currently in use had a 58.9% success rate.
+
+```{r}
+plastics_manual |> count(rf_success = group == rf_group) |> 
+  mutate(prop = n/sum(n))
+```
+
+Before fitting new models, data splitting is done to avoid misleading performance results due to overfitting. The training dataset is intended to have plastics of all types in similar proportion, this is achieved by setting the argument `strata = group`.
+
+```{r}
+plastics_split <- plastics_manual |> initial_split(strata = group)
+```
+
