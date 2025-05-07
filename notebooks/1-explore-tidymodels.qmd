@@ -1,0 +1,131 @@
+---
+title: "Exploration using Tidymodels"
+format: html
+---
+
+# The Surfing for Science data base
+
+Load the `tidymodels` library along with other useful ones:
+
+```{r}
+library(tidymodels)
+library(readr)
+```
+
+Load the full dataset from the Surging for Science project, also clean the variables names so they use `snake_case` and skip superfluous metadata. Character predictors are converter to type `factor` for compatibility with recipes.
+
+```{r}
+plastics <- read_csv("data/surfingforscience_240325.csv",
+                     col_types = cols(
+                       Particle_Num = col_skip(), 
+                       Cruise_Name = col_skip(), Transect = col_skip(), 
+                       Replicate = col_skip(), Sieve = col_skip(), 
+                       Subsample = col_skip(), File_Name = col_skip(), 
+                       Modified = col_skip(), ImageType = col_skip())) |> 
+janitor::clean_names() |> 
+mutate_if(is.character, as.factor)
+```
+
+The aim of this notebook is to evaluate performance of different models following the [tidymodels](https://www.tidymodels.org/) workflow. To evaluate performance we need plastics that have been evaluated manually so we can compare the trained human observer with the AI. A *good* model is the one that gets us very similar results to the trained human.
+
+Subset the data to get all plastics evaluated by a human observer.
+
+```{r}
+plastics_manual <- plastics |> filter(rf_use == FALSE)
+```
+
+Overall, the model currently in use had a 58.9% success rate.
+
+```{r}
+plastics_manual |> 
+  count(rf_success = as.character(group) == as.character(rf_group)) |> 
+  mutate(prop = n/sum(n))
+```
+
+Remove all variables related to the current model
+
+```{r}
+plastics_manual <- plastics_manual |> 
+  select(-starts_with("prob"), -starts_with("rf"))
+```
+
+Before fitting new models, data splitting is done to avoid training and evaluating the model with the same set of data. If so was done, the performance results would be overly optimistic due to overfitting. The training dataset is intended to have plastics of all types in similar proportion, this is achieved by setting the argument `strata = group`.
+
+```{r}
+plastics_split <- plastics_manual |> initial_split(prop = 3/4, strata = group)
+```
+
+After checking the relative group composition of our training set we observe that some groups are very rare: `Fibre.bundle`, `Paint.chip` and `NA.Other`
+
+```{r}
+train_plastics <- training(plastics_split)
+test_plastics <- testing(plastics_split)
+
+train_plastics |> count(group) |> mutate(prop = n/sum(n))
+```
+
+# Preprocessin using recipes
+
+Let's initialize a simple recipe for our first model
+
+```{r}
+plastics_recipe <- train_plastics |> recipe(group ~ .) |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_zv(all_predictors())
+```
+
+Next, define a random forest model of 1000 trees using the `ranger` engine.
+
+```{r}
+rf_mod <- 
+  rand_forest(trees = 100) |> 
+  set_engine("ranger") |> 
+  set_mode("classification")
+```
+
+Create a modelling workflow that combines the model and the recipe
+
+```{r}
+plastics_wflow <- workflow() |> add_model(rf_mod) |> add_recipe(plastics_recipe)
+```
+
+Fit the workflow to the training data
+
+::: {.callout-warning}
+Heavy computation ahead
+:::
+
+```{r}
+rf_fit <- plastics_wflow |> fit(data = train_plastics)
+```
+Let's see how it went
+
+```{r}
+rf_fit |> extract_fit_parsnip()
+```
+
+# Evaluating performance using resamples
+
+Lets create a 10 fold cross validation resample
+
+```{r}
+set.seed(567)
+folds <- train_plastics |> vfold_cv(v = 4)
+```
+
+Now fit the workflow to the resamples
+
+::: {.callout-warning}
+Heavy computation ahead
+:::
+
+```{r}
+set.seed(311)
+rf_fit_rs <- plastics_wflow |> fit_resamples(folds)
+```
+Finally, collect the metrics and see how it did
+
+```{r}
+rf_fit_rs |> collect_metrics()
+```
+
