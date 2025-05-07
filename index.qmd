@@ -8,5 +8,6 @@ authors:
 bibliography: references.bib
 ---
 
-## Section
-This is a simple placeholder for the manuscript's main document [@knuth84].
+## Introduction
+
+I try to classify microplastics found in the sea to determine the sources and propose informed solutions to the ecosocial crisis.
