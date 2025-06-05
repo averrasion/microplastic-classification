@@ -1,10 +1,8 @@
 ---
-title: Microplastic Classification
+title: "Microplastic classification"
 authors:
   - name: "Vera Gómez-Limón Gallardo"
-    affiliation: Universitat de Barcelona
-    roles: writing
-    corresponding: true
+    orcid: 0009-0005-4889-3412
 bibliography: references.bib
 ---
 
