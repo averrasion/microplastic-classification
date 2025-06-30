@@ -1,5 +1,5 @@
 ---
-title: "Exploration using Tidymodels"
+title: "Explore using Tidymodels"
 format: html
 ---
 
