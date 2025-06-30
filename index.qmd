@@ -3,6 +3,7 @@ title: "Microplastic classification"
 authors:
   - name: "Vera Gómez-Limón Gallardo"
     orcid: 0009-0005-4889-3412
+    affiliation: "Surfing for Science"
 bibliography: references.bib
 ---
 
