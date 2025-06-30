@@ -64,11 +64,34 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
   <p>I try to classify microplastics found in rivers sea to determine
   their source.</p>
 </sec>
+<sec id="the-data">
+  <title>The data</title>
+  <list list-type="bullet">
+    <list-item>
+      <p>There are <bold>a lot</bold> of fragments, then films</p>
+    </list-item>
+    <list-item>
+      <p>Pellets are <bold>always</bold> less than 1e+08 (squared
+      micrometers?)</p>
+    </list-item>
+    <list-item>
+      <p>Turf and fillaments are <bold>not round</bold></p>
+    </list-item>
+    <list-item>
+      <p>Turf is mostly <bold>opaque</bold>
+      (<bold>?@fig-count</bold>)</p>
+    </list-item>
+    <list-item>
+      <p>Pellets are mostly <bold>translucent</bold></p>
+    </list-item>
+  </list>
+</sec>
 </body>
 
 <back>
 </back>
 
 <!-- (F2ED4C6E)[nb-1]:/home/runner/work/microplastic-classification/microplastic-classification/notebooks/1-explore-tidymodels.qmd -->
+<!-- (F2ED4C6E)[nb-2]:/home/runner/work/microplastic-classification/microplastic-classification/notebooks/2-explore-data.qmd -->
 
 </article>
