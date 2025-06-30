@@ -10,3 +10,11 @@ bibliography: references.bib
 ## Introduction
 
 I try to classify microplastics found in rivers sea to determine their source.
+
+## The data
+
+- There are **a lot** of fragments, then films
+- Pellets are **always** less than 1e+08 (squared micrometers?)
+- Turf and fillaments are **not round**
+- Turf is mostly **opaque** (@fig-count)
+- Pellets are mostly **translucent**
