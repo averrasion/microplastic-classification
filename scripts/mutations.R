@@ -6,7 +6,8 @@ cols <- cols_only(
   L_BlackBackground = col_double(), a_BlackBackground = col_double(),
   b_BlackBackground = col_double(), L_GreenBackground = col_double(),
   a_GreenBackground = col_double(), b_GreenBackground = col_double(),
-  Color_sd = col_double(), Group = col_character(), RF_use = col_logical(),
+  Color_sd = col_double(), ColorNature = col_character(),
+  Group = col_character(), RF_use = col_logical(),
   File_Name = col_character(), Particle_Num = col_integer()
 )
 
@@ -20,6 +21,18 @@ data <- data |> mutate(
   id = str_c(file_name, "_", particle_num), .keep = "unused", .before = 1
 )
 
+data <- data |> mutate(
+  group = group |> fct_collapse(
+    turf = c("Artificial turf", "Artificial.turf"),
+    filament = c("Filament"),
+    film = c("Film.Sheet", "Film/Sheet"),
+    foam = c("Foam"),
+    fragment = c("Fragment"),
+    pellet = c("Pellet"),
+    spherule = c("Spherule.Microbead", "Spherule/Microbead"),
+    other_level = "other"
+  )
+)
 
-data |> write_rds("data/data.rds")
+data |> write_rds("data/plastics.rds")
 
