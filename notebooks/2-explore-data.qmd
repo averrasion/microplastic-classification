@@ -1,0 +1,68 @@
+---
+title: "Explore the data"
+format: html
+---
+
+```{r}
+library(tidyverse)
+
+data <- read_rds("data/plastics.rds")
+```
+
+```{r}
+data |> count()
+```
+```{r}
+data |> count(group)
+```
+
+```{r}
+#| label: fig-count
+
+data |> ggplot(aes(group)) +
+  geom_bar()
+```
+
+```{r}
+data |> ggplot(aes(group, area)) +
+  geom_violin() +
+  scale_y_log10()
+```
+
+```{r}
+data |> ggplot(aes(group, feret)) +
+  geom_violin() +
+  scale_y_log10()
+```
+
+```{r}
+data |> ggplot(aes(group, min_feret)) +
+  geom_violin() +
+  scale_y_log10()
+```
+
+```{r}
+data |> ggplot(aes(group, ar)) +
+  geom_violin()
+```
+
+```{r}
+data |> ggplot(aes(group, round)) +
+  geom_violin()
+```
+
+```{r}
+data |> ggplot(aes(group, solidity)) +
+  geom_violin()
+```
+
+```{r}
+data |> ggplot(aes(group, color_sd)) +
+  geom_violin()
+```
+
+```{r}
+data |> ggplot(aes(group, fill = color_nature)) +
+  geom_bar(position = "fill")
+```
+
